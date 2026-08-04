@@ -12,6 +12,7 @@ from tensorflow.keras.applications.mobilenet_v2 import preprocess_input as mobil
 IMAGE_SHAPE = (224, 224)
 PATH = "saved_digits/"
 
+
 from PySide6.QtCore import Qt, QPoint
 from PySide6.QtGui import QPixmap, QPainter, QPen, QColor
 from PySide6.QtWidgets import (
