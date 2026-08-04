@@ -10,6 +10,7 @@ from PIL import Image, ImageDraw
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input as mobilenet_preprocess_input
 
 IMAGE_SHAPE = (224, 224)
+PATH = "saved_digits/"
 
 from PySide6.QtCore import Qt, QPoint
 from PySide6.QtGui import QPixmap, QPainter, QPen, QColor
@@ -23,9 +24,6 @@ from PySide6.QtWidgets import (
     QMessageBox,
 )
 
-
-PATH = "saved_digits/"
-# ---------------- Config ---------------- #
 
 CANVAS_SIZE = 500
 OUTPUT_SIZE = 224
@@ -199,6 +197,14 @@ class DigitPad(QWidget):
         print(prediction)
         print("Digit:", np.argmax(prediction))
         print("Confidence:", np.max(prediction))
+        msg = QMessageBox()
+        msg.setWindowTitle("Prediction")
+        msg.setText(
+            f"Predicted Digit: {np.argmax(prediction)}\n"
+            f"Confidence: {np.max(prediction):.2%}"
+        )
+        msg.setIcon(QMessageBox.Information)
+        msg.exec()
 
     def clear_canvas(self):
         self.canvas.clear()
