@@ -7,6 +7,9 @@ from PIL import Image
 import numpy as np
 from pathlib import Path
 from PIL import Image, ImageDraw
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input as mobilenet_preprocess_input
+
+IMAGE_SHAPE = (224, 224)
 
 from PySide6.QtCore import Qt, QPoint
 from PySide6.QtGui import QPixmap, QPainter, QPen, QColor
@@ -25,7 +28,7 @@ PATH = "saved_digits/"
 # ---------------- Config ---------------- #
 
 CANVAS_SIZE = 500
-OUTPUT_SIZE = 28
+OUTPUT_SIZE = 224
 STROKE_WIDTH = 18
 SAVE_DIR = "saved_digits"
 
@@ -180,13 +183,19 @@ class DigitPad(QWidget):
             return None
         img = max(png_files, key=lambda x: x.stat().st_mtime)
         img = Image.open(img)
-        # plt.imshow(img)
-        # plt.show()
-        img = np.array(img, dtype=np.float32)
-        img = img / 255.0
-        img = np.expand_dims(img, axis=0)      # (1,28,28)
-        model =  tf.keras.models.load_model("my_model.keras")
-        prediction = model.predict(img, verbose=0)
+        img = img.convert("L")
+        img = img.resize((28, 28))
+        img = np.array(img)
+        img_tensor = tf.convert_to_tensor(img, dtype=tf.float32) # (28, 28)
+        img_tensor = tf.expand_dims(img_tensor, -1)              # (28, 28, 1)
+        img_tensor = tf.image.grayscale_to_rgb(img_tensor)       # (28, 28, 3)
+        img_tensor = tf.image.resize(img_tensor, IMAGE_SHAPE) 
+        img_tensor = mobilenet_preprocess_input(img_tensor) 
+        img_tensor = tf.expand_dims(img_tensor, axis=0)          # (1, 224, 224, 3) Add batch dimension
+        print(img_tensor.shape)
+        model =  tf.keras.models.load_model("mobilnet/mobilennetmodel.keras")
+
+        prediction = model.predict(img_tensor, verbose=0)
         print(prediction)
         print("Digit:", np.argmax(prediction))
         print("Confidence:", np.max(prediction))
