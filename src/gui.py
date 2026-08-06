@@ -8,7 +8,7 @@ import numpy as np
 from pathlib import Path
 from PIL import Image, ImageDraw
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input as mobilenet_preprocess_input
-
+import pandas as pd	
 IMAGE_SHAPE = (224, 224)
 PATH = "saved_digits/"
 
@@ -150,15 +150,18 @@ class DigitPad(QWidget):
         layout.addWidget(self.canvas)
 
         buttons = QHBoxLayout()
+        predict2_btn = QPushButton("Predict using Cnn")
 
-        predict_btn = QPushButton("Predict")
+        predict_btn = QPushButton("Predict using Mobilnet")
         clear_btn = QPushButton("Clear")
         save_btn = QPushButton("Save")
 
-        predict_btn.clicked.connect(self.predict)
+        predict_btn.clicked.connect(self.predict_Mobilnet)
+        predict2_btn.clicked.connect(self.predictcnn)
+
         clear_btn.clicked.connect(self.clear_canvas)
         save_btn.clicked.connect(self.save_image)
-
+        buttons.addWidget(predict2_btn)
         buttons.addWidget(predict_btn)
         buttons.addWidget(clear_btn)
         buttons.addWidget(save_btn)
@@ -169,8 +172,37 @@ class DigitPad(QWidget):
         self.status.setAlignment(Qt.AlignCenter)
 
         layout.addWidget(self.status)
+    def predictcnn(PATH):
+        model =  tf.keras.models.load_model("mobilnet/my_model.keras")
+        print(model.input_shape)
+        path="saved_digits/"
+        dirr  = Path(path)
+        if not dirr.exists():
+            print("empty")
+            return
+        png_files = list(dirr.glob("*.png"))
+        if not png_files:
+            print("Empty or no PNG files found")
+            return None
+        img = max(png_files, key=lambda x: x.stat().st_mtime)
+        img = Image.open(img)
+        img = img.resize((28,28))
+        img = np.array(img, dtype=np.float32) / 255.0
+        img = np.expand_dims(img, -1)
+        img = np.expand_dims(img, 0)
+        prediction = model.predict(img)
+        print("Digit:", np.argmax(prediction))
+        print("Confidence:", np.max(prediction))
+        msg = QMessageBox()
+        msg.setWindowTitle("Prediction")
+        msg.setText(
+            f"Predicted Digit: {np.argmax(prediction)}\n"
+            f"Confidence: {np.max(prediction):.2%}"
+        )
+        msg.setIcon(QMessageBox.Information)
+        msg.exec()
 
-    def predict(PATH):
+    def predict_Mobilnet(PATH):
         path="saved_digits/"
         dirr  = Path(path)
         if not dirr.exists():
@@ -183,7 +215,10 @@ class DigitPad(QWidget):
         img = max(png_files, key=lambda x: x.stat().st_mtime)
         img = Image.open(img)
         img = img.convert("L")
+        print(f"size{img.size}")
         img = img.resize((28, 28))
+        print("new size",img.size)
+
         img = np.array(img)
         img_tensor = tf.convert_to_tensor(img, dtype=tf.float32) # (28, 28)
         img_tensor = tf.expand_dims(img_tensor, -1)              # (28, 28, 1)
@@ -199,7 +234,7 @@ class DigitPad(QWidget):
         print("Digit:", np.argmax(prediction))
         print("Confidence:", np.max(prediction))
         msg = QMessageBox()
-        msg.setWindowTitle("Prediction")
+        msg.setWindowTitle("Prediction using MobilNet")
         msg.setText(
             f"Predicted Digit: {np.argmax(prediction)}\n"
             f"Confidence: {np.max(prediction):.2%}"
