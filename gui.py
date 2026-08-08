@@ -29,7 +29,7 @@ from PySide6.QtWidgets import (
 CANVAS_SIZE = 500
 OUTPUT_SIZE = 224
 STROKE_WIDTH = 18
-SAVE_DIR = "saved_digits"
+SAVE_DIR = "src/saved_digits"
 
 os.makedirs(SAVE_DIR, exist_ok=True)
 
@@ -173,9 +173,9 @@ class DigitPad(QWidget):
 
         layout.addWidget(self.status)
     def predictcnn(PATH):
-        model =  tf.keras.models.load_model("mobilnet/my_model.keras")
+        model =  tf.keras.models.load_model("src/mobilnet/my_model.keras")
         print(model.input_shape)
-        path="saved_digits/"
+        path="src/saved_digits/"
         dirr  = Path(path)
         if not dirr.exists():
             print("empty")
@@ -203,7 +203,7 @@ class DigitPad(QWidget):
         msg.exec()
 
     def predict_Mobilnet(PATH):
-        path="saved_digits/"
+        path="src/saved_digits/"
         dirr  = Path(path)
         if not dirr.exists():
             print("empty")
@@ -227,7 +227,7 @@ class DigitPad(QWidget):
         img_tensor = mobilenet_preprocess_input(img_tensor) 
         img_tensor = tf.expand_dims(img_tensor, axis=0)          # (1, 224, 224, 3) Add batch dimension
         print(img_tensor.shape)
-        model =  tf.keras.models.load_model("mobilnet/mobilennetmodel.keras")
+        model =  tf.keras.models.load_model("src/mobilnet/mobilennetmodel.keras")
 
         prediction = model.predict(img_tensor, verbose=0)
         print(prediction)
