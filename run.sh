@@ -2,19 +2,20 @@
 
 set -e
 
-VENV=".venv"
+PYTHON="python3.12"
+VENV=".venv-py312"
 
 echo "==> Checking Python..."
 
-if ! command -v python3 &> /dev/null; then
-    echo "Error: python3 is not installed."
+if ! command -v "$PYTHON" &> /dev/null; then
+    echo "Error: Python 3.12 is required but is not installed."
     exit 1
 fi
 
 echo "==> Creating virtual environment..."
 
 if [ ! -d "$VENV" ]; then
-    python3 -m venv "$VENV"
+    "$PYTHON" -m venv "$VENV"
     echo "Virtual environment created."
 else
     echo "Virtual environment already exists."
@@ -26,9 +27,9 @@ source "$VENV/bin/activate"
 
 echo "==> Installing dependencies..."
 
-python3.12 -m pip install --upgrade pip
-python3.12 -m pip install -r req.txt
+python -m pip install --upgrade pip
+python -m pip install -r req.txt
 
 echo "==> Starting GUI..."
 
-python3.12 gui.py
+python gui.py

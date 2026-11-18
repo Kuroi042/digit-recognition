@@ -1,55 +1,73 @@
-# digit-recognition
+# Handwritten Digit Recognition
 
-<img width="960" height="720" alt="image" src="https://miro.medium.com/v2/resize:fit:1400/1*hSbHWUSQreLeyA6Nr2KIqg.png" />
+A desktop application that recognizes a digit drawn by the user. It lets you compare a custom CNN with a MobileNetV2 transfer-learning model trained to classify handwritten digits from **0** to **9**.
 
-# 0–9 Digit Recognition with CNN & MobileNetV2
+## Features
 
-A handwritten digit recognition project that compares two different deep learning approaches using TensorFlow/Keras.
-
-The application allows the user to draw a digit from **0 to 9** through a graphical interface and predicts the digit using a trained neural network.
+- Draw a digit on an interactive canvas.
+- Classify the drawing with either the custom CNN or MobileNetV2.
+- Display the predicted digit and the three most likely classes.
+- Normalize drawings in an MNIST-style format: crop the digit, preserve its aspect ratio, and center it on a 28 × 28 black canvas.
+- Save normalized drawings as PNG files for inspection.
 
 ## Models
 
-This project contains two Keras models:
+| Model | Description | Expected input |
+| --- | --- | --- |
+| Custom CNN | CNN trained from scratch for digit classification | 28 × 28 grayscale image |
+| MobileNetV2 | ImageNet-pretrained MobileNetV2 with a 10-class classification head | 224 × 224 RGB image |
 
-### 1. Custom CNN
+The GUI applies the preprocessing required by each model automatically.
 
-The first model is a convolutional neural network built from scratch using Keras CNN layers.
+## Requirements
 
-The architecture includes:
+- Python 3.12
+- The dependencies listed in `req.txt`
+- Saved model files in `src/mobilnet/`:
+  - `my_model.keras` — custom CNN
+  - `mobilennetmodel.keras` — MobileNetV2
 
-- Convolutional layers
-- ReLU activation
-- MaxPooling layers
-- Flatten
-- Dense layers
-- Softmax output layer
+## Run the application
 
-The model is trained specifically for handwritten digit classification.
+From the project root:
 
-### 2. MobileNetV2 Transfer Learning
+```bash
+bash run.sh
+```
 
-The second model uses **MobileNetV2** pretrained on the **ImageNet** dataset.
+The script creates or reuses `.venv-py312`, installs the dependencies, and launches the GUI.
 
-Instead of training the entire network from scratch:
+To run it manually:
 
-- MobileNetV2 is loaded with ImageNet pretrained weights.
-- The original classification head is removed.
-- The pretrained convolutional base is used as a feature extractor.
-- A new classification head is added for the 10 digit classes.
-- MNIST images are converted from grayscale to RGB.
-- Images are resized to `224 × 224`, matching the MobileNetV2 input size.
-- MobileNetV2 preprocessing is applied before prediction.
+```bash
+python3.12 -m venv .venv-py312
+source .venv-py312/bin/activate
+python -m pip install -r req.txt
+python gui.py
+```
 
-This approach demonstrates the use of **transfer learning** for computer vision.
+## Usage
 
----
+1. Draw one digit using the mouse.
+2. Select **Predict with CNN** or **Predict with MobileNetV2**.
+3. Review the predicted digit and the top three probabilities.
+4. Use **Clear** to start over, or **Save drawing** to save the normalized digit under `src/saved_digits/`.
 
-## Dataset
-
-The project uses the **MNIST handwritten digit dataset**.
-
-MNIST contains grayscale images of handwritten digits from:
+## Project structure
 
 ```text
-0 → 9
+.
+├── gui.py                  # PySide6 drawing and prediction application
+├── run.sh                  # Environment setup and application launcher
+├── req.txt                 # Python dependencies
+└── src/
+    ├── cnn.ipynb           # Custom CNN training notebook
+    ├── Mobilnet.ipynb      # MobileNetV2 training notebook
+    ├── mobilnet/           # Saved Keras models
+    └── saved_digits/       # Drawings saved by the application
+```
+
+## Notes
+
+- A GPU is optional. TensorFlow runs on the CPU when no compatible CUDA driver is available.
+- The confidence values are model probabilities, not a guarantee that a prediction is correct.
