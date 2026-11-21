@@ -2,8 +2,8 @@
 
 set -e
 
-PYTHON="python3.12"
-VENV=".venv-py312"
+PYTHON="python3.13"
+VENV=".venv-py313"
 
 echo "==> Checking Python..."
 

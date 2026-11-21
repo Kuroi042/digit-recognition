@@ -53,6 +53,12 @@ python gui.py
 3. Review the predicted digit and the top three probabilities.
 4. Use **Clear** to start over, or **Save drawing** to save the normalized digit under `src/saved_digits/`.
 
+## Demo
+
+<video src="demo.mp4" controls width="600"></video>
+
+[Download the demo video](demo.mp4)
+
 ## Project structure
 
 ```text
@@ -60,6 +66,7 @@ python gui.py
 ├── gui.py                  # PySide6 drawing and prediction application
 ├── run.sh                  # Environment setup and application launcher
 ├── req.txt                 # Python dependencies
+├── demo.mp4                # Short demo of the application
 └── src/
     ├── cnn.ipynb           # Custom CNN training notebook
     ├── Mobilnet.ipynb      # MobileNetV2 training notebook
