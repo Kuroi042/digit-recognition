@@ -57,8 +57,6 @@ python gui.py
 
 ![Handwritten digit recognition app demo](demo.gif)
 
-[Download the full demo video (MP4)](demo.mp4)
-
 ## Project structure
 
 ```text
