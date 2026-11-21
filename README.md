@@ -55,9 +55,9 @@ python gui.py
 
 ## Demo
 
-<video src="demo.mp4" controls width="600"></video>
+![Handwritten digit recognition app demo](demo.gif)
 
-[Download the demo video](demo.mp4)
+[Download the full demo video (MP4)](demo.mp4)
 
 ## Project structure
 
@@ -66,7 +66,8 @@ python gui.py
 ├── gui.py                  # PySide6 drawing and prediction application
 ├── run.sh                  # Environment setup and application launcher
 ├── req.txt                 # Python dependencies
-├── demo.mp4                # Short demo of the application
+├── demo.gif                # Animated demo that plays inline in this README
+├── demo.mp4                # Full-resolution demo video
 └── src/
     ├── cnn.ipynb           # Custom CNN training notebook
     ├── Mobilnet.ipynb      # MobileNetV2 training notebook
